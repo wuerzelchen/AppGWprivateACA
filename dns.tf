@@ -2,6 +2,7 @@ resource "azurerm_private_dns_zone" "dnszone" {
   name                = join(".", slice(split(".", azurerm_container_app.my_app.latest_revision_fqdn), 1, length(split(".", azurerm_container_app.my_app.latest_revision_fqdn))))
   resource_group_name = azurerm_resource_group.rg.name
   depends_on          = [azurerm_container_app.my_app]
+  tags                = var.tags
 }
 
 resource "azurerm_private_dns_a_record" "example_star" {

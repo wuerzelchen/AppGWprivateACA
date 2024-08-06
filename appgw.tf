@@ -70,6 +70,7 @@ resource "azurerm_application_gateway" "appgw" {
     rule_set_type    = "OWASP"
     rule_set_version = "3.2"
   }
+  tags = var.tags
 }
 
 resource "azurerm_public_ip" "public_ip" {
@@ -78,4 +79,5 @@ resource "azurerm_public_ip" "public_ip" {
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
+  tags                = var.tags
 }

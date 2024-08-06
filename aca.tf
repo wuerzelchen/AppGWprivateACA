@@ -21,6 +21,7 @@ resource "azurerm_container_app" "my_app" {
       cpu    = 0.25
     }
   }
+  tags = var.tags
 }
 
 resource "azurerm_container_app_environment" "aca_env" {
@@ -29,6 +30,7 @@ resource "azurerm_container_app_environment" "aca_env" {
   resource_group_name            = azurerm_resource_group.rg.name
   internal_load_balancer_enabled = true
   infrastructure_subnet_id       = azurerm_subnet.acasubnet.id
+  tags = var.tags
 }
 
 
