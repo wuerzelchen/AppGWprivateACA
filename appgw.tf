@@ -1,3 +1,14 @@
+locals {
+  backend_address_pool_name       = "${azurerm_resource_group.rg.name}-beap"
+  frontend_port_name              = "${azurerm_resource_group.rg.name}-feport"
+  frontend_ip_configuration_name  = "${azurerm_resource_group.rg.name}-feip"
+  http_setting_name               = "${azurerm_resource_group.rg.name}-be-htst"
+  listener_name                   = "${azurerm_resource_group.rg.name}-httplstn"
+  request_routing_rule_name       = "${azurerm_resource_group.rg.name}-rqrt"
+  redirect_configuration_name     = "${azurerm_resource_group.rg.name}-rdrcfg"
+  private_link_configuration_name = "${azurerm_resource_group.rg.name}-plcfg"
+}
+
 resource "azurerm_application_gateway" "appgw" {
   name                = "myAppGateway"
   location            = azurerm_resource_group.rg.location
@@ -14,27 +25,27 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_port {
-    name = "frontendPort"
+    name = local.frontend_port_name
     port = 80
   }
 
   request_routing_rule {
-    name                       = "example-rule"
+    name                       = local.request_routing_rule_name
     rule_type                  = "Basic"
-    http_listener_name         = "httpListener"
-    backend_address_pool_name  = "backendPool"
-    backend_http_settings_name = "httpSettings"
+    http_listener_name         = local.listener_name
+    backend_address_pool_name  = local.backend_address_pool_name
+    backend_http_settings_name = local.http_setting_name
     priority                   = 1
   }
 
   frontend_ip_configuration {
-    name                            = "frontendConfig"
+    name                            = local.frontend_ip_configuration_name
     public_ip_address_id            = azurerm_public_ip.public_ip.id
-    private_link_configuration_name = "myPrivateLinkConfig"
+    private_link_configuration_name = local.private_link_configuration_name
   }
 
   private_link_configuration {
-    name = "myPrivateLinkConfig"
+    name = local.private_link_configuration_name
     ip_configuration {
       name                          = "myPrivateLinkIPConfig"
       primary                       = true
@@ -44,12 +55,12 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   backend_address_pool {
-    name  = "backendPool"
+    name  = local.backend_address_pool_name
     fqdns = [azurerm_container_app.my_app.latest_revision_fqdn]
   }
 
   backend_http_settings {
-    name                                = "httpSettings"
+    name                                = local.http_setting_name
     cookie_based_affinity               = "Disabled"
     port                                = 443
     protocol                            = "Https"
@@ -58,9 +69,9 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   http_listener {
-    name                           = "httpListener"
-    frontend_ip_configuration_name = "frontendConfig"
-    frontend_port_name             = "frontendPort"
+    name                           = local.listener_name
+    frontend_ip_configuration_name = local.frontend_ip_configuration_name
+    frontend_port_name             = local.frontend_port_name
     protocol                       = "Http"
   }
 
