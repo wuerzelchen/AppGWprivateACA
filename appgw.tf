@@ -39,19 +39,8 @@ resource "azurerm_application_gateway" "appgw" {
   }
 
   frontend_ip_configuration {
-    name                            = local.frontend_ip_configuration_name
-    public_ip_address_id            = azurerm_public_ip.public_ip.id
-    private_link_configuration_name = local.private_link_configuration_name
-  }
-
-  private_link_configuration {
-    name = local.private_link_configuration_name
-    ip_configuration {
-      name                          = "myPrivateLinkIPConfig"
-      primary                       = true
-      private_ip_address_allocation = "Dynamic"
-      subnet_id                     = azurerm_subnet.acasubnet.id
-    }
+    name                 = local.frontend_ip_configuration_name
+    public_ip_address_id = azurerm_public_ip.public_ip.id
   }
 
   backend_address_pool {
