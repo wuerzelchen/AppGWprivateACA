@@ -27,7 +27,7 @@ graph TB
             end
         end
         
-        DNS[Private DNS Zone<br/>*.azurecontainerapps.io<br/>A Records: * and @]
+        DNS[Private DNS Zone<br/>region.azurecontainerapps.io<br/>A Records: * and @]
     end
     
     Client -->|HTTP :80| PublicIP
@@ -89,7 +89,7 @@ The VNet contains two subnets:
   - Uses OWASP rule set version 3.2
   - Protects against common web vulnerabilities (SQL injection, XSS, etc.)
 
-**Traffic Flow**: External clients connect via HTTP on port 80. The Application Gateway then forwards traffic via HTTPS on port 443 to the Container App Environment's internal load balancer, which routes to the Container App on port 80.
+**Traffic Flow**: External clients connect via HTTP on port 80. The Application Gateway then forwards traffic via HTTPS on port 443 to the Container App's FQDN. The Container App Environment provides automatic TLS termination and routes the request to the container application listening on port 80.
 
 ### 4. **Container App Environment**
 - **Name**: `myContainerAppEnv`
@@ -125,11 +125,13 @@ The VNet contains two subnets:
 
 3. **DNS Resolution**: The Application Gateway resolves the Container App's FQDN using the Private DNS Zone, which returns the internal IP address of the Container App Environment
 
-4. **Traffic Forwarding**: The Application Gateway forwards the request via HTTPS (port 443) to the Container App's internal endpoint
+4. **Secure Forwarding**: The Application Gateway forwards the request via HTTPS (port 443) to the Container App's FQDN
 
-5. **Container Processing**: The Container App processes the request and returns the response
+5. **TLS Termination**: The Container App Environment terminates the TLS connection and routes the request to the container application on port 80
 
-6. **Response Path**: The response travels back through the Application Gateway to the client
+6. **Container Processing**: The Container App processes the request and returns the response
+
+7. **Response Path**: The response travels back through the Container App Environment and Application Gateway to the client
 
 ## Security Features
 
