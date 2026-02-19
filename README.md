@@ -89,7 +89,7 @@ The VNet contains two subnets:
   - Uses OWASP rule set version 3.2
   - Protects against common web vulnerabilities (SQL injection, XSS, etc.)
 
-**Traffic Flow**: HTTP :80 → HTTPS :443 (the Application Gateway terminates external HTTP and forwards to Container App via HTTPS)
+**Traffic Flow**: External clients connect via HTTP on port 80. The Application Gateway then forwards traffic via HTTPS on port 443 to the Container App Environment's internal load balancer, which routes to the Container App on port 80.
 
 ### 4. **Container App Environment**
 - **Name**: `myContainerAppEnv`
@@ -110,7 +110,7 @@ The VNet contains two subnets:
 - **Revision Mode**: Single (only one revision active at a time)
 
 ### 6. **Private DNS Zone**
-- **Zone Name**: Dynamically created based on Container App FQDN (e.g., `<region>.azurecontainerapps.io`)
+- **Zone Name**: Dynamically created based on Container App FQDN (e.g., `westeurope.azurecontainerapps.io` for West Europe region)
 - **Records**:
   - **Wildcard A Record (`*`)**: Points to the Container App Environment's static IP
   - **Root A Record (`@`)**: Points to the Container App Environment's static IP
